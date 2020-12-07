@@ -6,25 +6,24 @@
   #(and (re-matches #"\d+" %)
         (<= min (Integer/parseInt %) max)))
 
+(defn measurement-between [min max suffix]
+  #(and (re-matches (re-pattern (str "\\d+" suffix)) %)
+        (<= min (Integer/parseInt (str/replace % (re-pattern suffix) "")) max)))
+
 (s/def ::byr (s/and string? (year-between 1920 2002)))
 
 (s/def ::iyr (s/and string? (year-between 2010 2020)))
 
 (s/def ::eyr (s/and string? (year-between 2020 2030)))
 
-(s/def ::hgt (s/and string?
-                    #(or (and (re-matches #"\d+in" %)
-                              (<= 59 (Integer/parseInt (str/replace % #"in" "")) 76))
-                         (and (re-matches #"\d+cm" %)
-                              (<= 150 (Integer/parseInt (str/replace % #"cm" "")) 193)))))
-(s/def ::hcl (s/and string?
-                    #(re-matches #"#[0-9a-f]{6}" %)))
+(s/def ::hgt (s/and string? #(or (measurement-between 59 76 "in")
+                                 (measurement-between 150 193 "cm"))))
 
-(s/def ::ecl (s/and string?
-                    #(re-matches #"amb|blu|brn|gry|grn|hzl|oth" %)))
+(s/def ::hcl (s/and string? #(re-matches #"#[0-9a-f]{6}" %)))
 
-(s/def ::pid (s/and string?
-                    #(re-matches #"0*\d{9}" %)))
+(s/def ::ecl (s/and string? #(re-matches #"amb|blu|brn|gry|grn|hzl|oth" %)))
+
+(s/def ::pid (s/and string? #(re-matches #"0*\d{9}" %)))
 
 (s/def ::cid string?)
 
